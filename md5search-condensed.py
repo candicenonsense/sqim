@@ -42,7 +42,7 @@ def main(args):
 		     if 'clamav' in an:
 			 #print an['md5'], an['clamav'], bar['score']
                          result=dict(name=an['clamav'],size=bar['score'],md5=an['md5'])
-                         res2="av: "+an['clamav']+" score: "+bar['score']
+                         res2="av: "+an['clamav'].replace('FOUND','')+" score: "+bar['score']
 			 reslist.append(result)
 			 stringlist.append(res2)
 	     similars2=database.similar.find({'name2':foo['filename']})
@@ -52,7 +52,7 @@ def main(args):
 		     if 'clamav' in an:
 			 #print an['md5'], an['clamav'], bar['score']
                          result=dict(name=an['clamav'],size=bar['score'],md5=an['md5'])
-                         res2="av: "+an['clamav']+" score: "+bar['score']
+                         res2="av: "+an['clamav'].replace('FOUND','')+" score: "+bar['score']
 			 reslist.append(result)
 			 stringlist.append(res2)
 	     counted=Counter(stringlist)
@@ -61,7 +61,9 @@ def main(args):
 	     for c in counted.items():
                  #print dict(name=c[0],size=c[1])
                  endlist.append(dict(name=c[0],size=c[1]))
-             hugeobject.append(dict(name=foo['filename'],children=endlist,size=len(endlist),md5=foo['md5']))
+             #sorted(endlist,key=lambda k: k['size'])
+
+             hugeobject.append(dict(name=foo['filename'],children=sorted(endlist,key=lambda k: k['size'], reverse=True),size=len(endlist),md5=foo['md5']))
         fin=dict(name="malware",children=hugeobject) 
         print json.dumps(fin) 
 
